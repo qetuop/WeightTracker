@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         String date = dateET.getText().toString();
         System.out.println(date);
 
+        // Add the current time to the entered date for storing
         Date dateOut = new Date();
         try {
             DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
