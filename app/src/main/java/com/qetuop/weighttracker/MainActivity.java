@@ -40,13 +40,13 @@ public class MainActivity extends AppCompatActivity {
         db = new DBHelper(this.getApplicationContext());
 
         // TODO: TMP HACK
-        db.deleteAllEntries();
-        db.addEntry(new Entry(System.currentTimeMillis(),123.4));
-        db.addEntry(new Entry(System.currentTimeMillis()-1_000_000_000,55));
+        //db.deleteAllEntries();
+        //db.addEntry(new Entry(System.currentTimeMillis(),123.4));
+        //db.addEntry(new Entry(System.currentTimeMillis()-1_000_000_000,55));
         List<Entry> entries = db.getAllEntries();
-        for (Entry entry : entries) {
-            Log.d("Name: ", entry.toString());
-        }
+//        for (Entry entry : entries) {
+//            Log.d("Name: ", entry.toString());
+//        }
 
 
 
@@ -80,10 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void okClicked(View view){
         String weight = weightET.getText().toString();
-        System.out.println(weight);
-
         String date = dateET.getText().toString();
-        System.out.println(date);
 
         // Add the current time to the entered date for storing
         Date dateOut = new Date();
@@ -107,13 +104,17 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, entry.toString(), Toast.LENGTH_SHORT).show();
 
         db.addEntry(entry);
+
+        updateTable();
+    }
+
+    private void updateTable() {
         weightCursor = db.getAllEntriesCursor();
         weightAdapter.changeCursor(weightCursor);
     }
 
     public void changeWeightClicked(View view) {
-        System.out.println(view.getId());
-        System.out.println(R.id.incMoreWeightButton);
+
         String weight = weightET.getText().toString();
         try {
             Double d = Double.parseDouble(weight);
@@ -140,21 +141,37 @@ public class MainActivity extends AppCompatActivity {
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
-
-        String date = dateET.getText().toString();
-        System.out.println(date);
-    }
+    } // changeWeightClicked
 
 
-    public void incDateClicked(View view) {
-        String weight = weightET.getText().toString();
-        System.out.println(weight);
+    public void changeDateClicked(View view) {
 
-        String date = dateET.getText().toString();
-        System.out.println(date);
-    }
+        // Add the current time to the entered date for storing
+        Date dateOut = new Date();
+        try {
+            DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+            dateOut = df.parse(dateET.getText().toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dateOut);
 
+        switch ( view.getId()) {
+            case R.id.nextDateButton:
+                calendar.add(Calendar.HOUR, +24);
+                break;
 
+            case R.id.prevDateButton:
+                calendar.add(Calendar.HOUR, -24);
+                break;
+        }
 
-}
+        Date newDate = calendar.getTime();
+        String timeStamp = new SimpleDateFormat("MM/dd/yyyy").format(newDate);
+        dateET.setText(timeStamp);;
+
+    } // changeDateClicked
+
+} // MainActivity
