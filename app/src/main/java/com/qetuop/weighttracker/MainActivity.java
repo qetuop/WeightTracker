@@ -1,10 +1,12 @@
 package com.qetuop.weighttracker;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.text.DecimalFormat;
@@ -23,7 +25,12 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText weightET;
     private EditText dateET;
+    private ListView historyLV;
+
     private DBHelper db;
+
+    private Cursor weightCursor;
+    private WeightCursorAdapter weightAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +69,14 @@ public class MainActivity extends AppCompatActivity {
         dateET = (EditText)findViewById(R.id.dateET);
         String timeStamp = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
         dateET.setText(timeStamp);
-    }
+
+        // populate history list view
+        historyLV = (ListView)findViewById(R.id.historyLV);
+        weightCursor = db.getAllEntriesCursor();
+        weightAdapter = new WeightCursorAdapter(this, weightCursor);
+        historyLV.setAdapter(weightAdapter);
+
+    } // onCreate
 
     public void okClicked(View view){
         String weight = weightET.getText().toString();
@@ -92,6 +106,8 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, entry.toString(), Toast.LENGTH_SHORT).show();
 
         db.addEntry(entry);
+        weightCursor = db.getAllEntriesCursor();
+        weightAdapter.changeCursor(weightCursor);
     }
 
     public void changeWeightClicked(View view) {

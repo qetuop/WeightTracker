@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.app.DownloadManager.COLUMN_ID;
+
 /**
  * Created by brian on 6/17/17.
  */
@@ -22,7 +24,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public static final String WEIGHT_TABLE_NAME = "weight_table";
 
-    public static final String WEIGHT_COLUMN_ID = "id";
+    public static final String WEIGHT_COLUMN_ID = "_id"; // use _id not id for...reasons?
     public static final String WEIGHT_COLUMN_DATE = "date";
     public static final String WEIGHT_COLUMN_WEIGHT = "weight";
     public static final String WEIGHT_COLUMN_COMMENT = "comment";
@@ -37,6 +39,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + WEIGHT_TABLE_NAME;
+
+    private String[] projection = {
+            WEIGHT_COLUMN_ID,
+            WEIGHT_COLUMN_DATE,
+            WEIGHT_COLUMN_WEIGHT,
+            WEIGHT_COLUMN_COMMENT
+    };
 
 
     public DBHelper(Context context) {
@@ -161,6 +170,23 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DELETE_ENTRIES);
         onCreate(db);
         db.close();
+    }
+
+    public Cursor getAllEntriesCursor() {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Cursor cursor = db.query(
+                WEIGHT_TABLE_NAME,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        cursor.moveToFirst();
+
+        return cursor;
     }
     
 }
