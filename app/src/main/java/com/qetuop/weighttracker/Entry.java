@@ -1,32 +1,36 @@
 package com.qetuop.weighttracker;
 
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 /**
  * Created by brian on 6/17/17.
  */
 
 public class Entry {
-    int id;
-    int date;
-    double weight;
-    String comment;
+    private int id;
+    private long date;
+    private double weight;
+    private String comment;
 
     public Entry() {}
 
-    public Entry(int id, int date, double weight, String comment) {
+    public Entry(int id, long date, double weight, String comment) {
         this.id = id;
         this.date = date;
         this.weight = weight;
         this.comment = comment;
     }
 
-    public Entry(int id, int date, double weight) {
+    public Entry(int id, long date, double weight) {
         this.id = id;
         this.date = date;
         this.weight = weight;
         this.comment = "";
     }
 
-    public Entry( int date, double weight) {
+    public Entry( long date, double weight) {
         this.date = date;
         this.weight = weight;
         this.comment = "";
@@ -40,11 +44,11 @@ public class Entry {
         this.id = id;
     }
 
-    public int getDate() {
+    public long getDate() {
         return date;
     }
 
-    public void setDate(int date) {
+    public void setDate(long date) {
         this.date = date;
     }
 
@@ -62,5 +66,18 @@ public class Entry {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    @Override
+    public String toString() {
+        DateFormat df = DateFormat.getDateTimeInstance();
+        df.setTimeZone(TimeZone.getTimeZone("EST"));
+
+        return "Entry{" +
+                "id=" + id +
+                ", date=" + df.format(new Date(getDate())) + " (" +  ")" +
+                ", weight=" + weight +
+                ", comment='" + comment + '\'' +
+                '}';
     }
 }

@@ -7,10 +7,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.text.DateFormat;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import static java.security.AccessController.getContext;
 
@@ -27,29 +31,35 @@ public class MainActivity extends AppCompatActivity {
 
         db = new DBHelper(this.getApplicationContext());
 
+        // TODO: TMP HACK
         db.deleteAllEntries();
-
-        // Inserting Contacts
-        Log.d("Insert: ", "Inserting ..");
-        db.addEntry(new Entry(123456,123.4));
-        db.addEntry(new Entry(765433,55));
-
-        // Reading all contacts
-        Log.d("Reading: ", "Reading all contacts..");
+        db.addEntry(new Entry(System.currentTimeMillis(),123.4));
+        db.addEntry(new Entry(System.currentTimeMillis()-1_000_000_000,55));
         List<Entry> entries = db.getAllEntries();
-
-        for (Entry cn : entries) {
-            String log = "Id: " + cn.getId() + " ,Date: " + cn.getDate() + " ,Weight: " + cn.getWeight() + " ,Comment: " + cn.getComment();
-            // Writing Contacts to log
-            Log.d("Name: ", log);
+        for (Entry entry : entries) {
+            Log.d("Name: ", entry.toString());
         }
 
-        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-        String timeStamp = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
 
+
+        // set weight to last entry
         weightET = (EditText)findViewById(R.id.weightET);
-        dateET = (EditText)findViewById(R.id.dateET);
+        double weight = 0.0;
+        // TODO: make db call function to get last entry
+        try {
+            Entry lastEntry = entries.get(entries.size()-1);
+            weight = lastEntry.getWeight();
+            weightET.setText(String.valueOf(weight));
+        } catch (IndexOutOfBoundsException e) {
+            weightET.setText("000.0");
+            e.printStackTrace();
+        }
 
+
+
+        // set date to now
+        dateET = (EditText)findViewById(R.id.dateET);
+        String timeStamp = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
         dateET.setText(timeStamp);
     }
 
@@ -60,8 +70,27 @@ public class MainActivity extends AppCompatActivity {
         String date = dateET.getText().toString();
         System.out.println(date);
 
-        Toast.makeText(this, "Weight=", Toast.LENGTH_SHORT).show();
+        Date dateOut = new Date();
+        try {
+            DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+            String timeString = df.format(new Date()).substring(10); // 10 is the beginIndex of time here
+            String dateTimeString = date+" "+timeString;
+            dateOut = df.parse(dateTimeString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
+        Double d = 0.0;
+        try {
+            d = Double.parseDouble(weight);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+
+        Entry entry = new Entry(dateOut.getTime(), d);
+        Toast.makeText(this, entry.toString(), Toast.LENGTH_SHORT).show();
+
+        db.addEntry(entry);
 
 
 

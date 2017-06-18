@@ -89,7 +89,7 @@ public class DBHelper extends SQLiteOpenHelper {
             cursor.moveToFirst();
 
         Entry entry = new Entry(Integer.parseInt(cursor.getString(0)),
-                                Integer.parseInt(cursor.getString(1)),
+                                Long.parseLong(cursor.getString(1)),
                                 Float.parseFloat(cursor.getString(2)),
                                 cursor.getString(3));
         // return entry
@@ -110,7 +110,7 @@ public class DBHelper extends SQLiteOpenHelper {
             do {
                 Entry entry = new Entry();
                 entry.setId(Integer.parseInt(cursor.getString(0)));
-                entry.setDate(Integer.parseInt(cursor.getString(1)));
+                entry.setDate(Long.parseLong(cursor.getString(1)));
                 entry.setWeight(Float.parseFloat(cursor.getString(2)));
                 entry.setComment(cursor.getString(3));
 
