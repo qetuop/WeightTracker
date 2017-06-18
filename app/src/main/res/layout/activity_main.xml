@@ -9,8 +9,8 @@
 
     <EditText
         android:id="@+id/dateET"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="114dp"
+        android:layout_height="48dp"
         android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="Date"
@@ -21,45 +21,104 @@
 
     <EditText
         android:id="@+id/weightET"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="91dp"
+        android:layout_height="48dp"
         android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="Weight"
         android:inputType="numberDecimal"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteY="8dp" />
 
     <Button
         android:id="@+id/prevDateButton"
         android:layout_width="40dp"
         android:layout_height="48dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
+        android:onClick="decDateClicked"
         android:text="@string/prev"
         app:layout_constraintRight_toLeftOf="@+id/dateET"
-        app:layout_constraintTop_toTopOf="@+id/dateET"
-        android:layout_marginEnd="15dp" />
+        app:layout_constraintTop_toTopOf="@+id/dateET" />
 
     <Button
         android:id="@+id/nextDateButton"
         android:layout_width="40dp"
         android:layout_height="48dp"
-        android:layout_marginLeft="15dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="0dp"
+        android:onClick="incDateClicked"
         android:text="@string/next"
         app:layout_constraintLeft_toRightOf="@+id/dateET"
-        app:layout_constraintTop_toTopOf="@+id/dateET"
-        android:layout_marginStart="15dp" />
+        app:layout_constraintTop_toTopOf="@+id/dateET" />
 
     <Button
         android:id="@+id/okButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="73dp"
+        android:layout_marginTop="8dp"
         android:onClick="okClicked"
         android:text="@string/ok"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dateET" />
+
+    <Button
+        android:id="@+id/incMoreWeightButton"
+        android:layout_width="40dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="3dp"
+        android:onClick="changeWeightClicked"
+        android:text="@string/incMore"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toRightOf="@+id/incWeightButton"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/weightET" />
+
+    <Button
+        android:id="@+id/incWeightButton"
+        android:layout_width="40dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
+        android:onClick="changeWeightClicked"
+        android:text="@string/inc"
+        app:layout_constraintHorizontal_bias="0.304"
+        app:layout_constraintLeft_toRightOf="@+id/weightET"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/weightET" />
+
+    <Button
+        android:id="@+id/decWeightButton"
+        android:layout_width="40dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
+        android:onClick="changeWeightClicked"
+        android:text="@string/dec"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/weightET"
+        app:layout_constraintTop_toTopOf="@+id/weightET" />
+
+    <Button
+        android:id="@+id/decMoreWeightButton"
+        android:layout_width="40dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="7dp"
+        android:layout_marginTop="8dp"
+        android:onClick="changeWeightClicked"
+        android:text="@string/decMore"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/decWeightButton"
+        app:layout_constraintTop_toTopOf="@+id/weightET" />
 
 </android.support.constraint.ConstraintLayout>

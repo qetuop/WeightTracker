@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -91,10 +92,49 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, entry.toString(), Toast.LENGTH_SHORT).show();
 
         db.addEntry(entry);
+    }
+
+    public void changeWeightClicked(View view) {
+        System.out.println(view.getId());
+        System.out.println(R.id.incMoreWeightButton);
+        String weight = weightET.getText().toString();
+        try {
+            Double d = Double.parseDouble(weight);
+            switch ( view.getId()){
+                case R.id.incWeightButton:
+                    d += 0.1;
+                    break;
+
+                case R.id.incMoreWeightButton:
+                    d += 1.0;
+                    break;
+
+                case R.id.decWeightButton:
+                    d -= 0.1;
+                    break;
+
+                case R.id.decMoreWeightButton:
+                    d -= 1.0;
+                    break;
+            }
+
+            DecimalFormat df2 = new DecimalFormat("###.#");
+            weightET.setText(String.valueOf(Double.valueOf(df2.format(d))));
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+
+        String date = dateET.getText().toString();
+        System.out.println(date);
+    }
 
 
+    public void incDateClicked(View view) {
+        String weight = weightET.getText().toString();
+        System.out.println(weight);
 
-
+        String date = dateET.getText().toString();
+        System.out.println(date);
     }
 
 

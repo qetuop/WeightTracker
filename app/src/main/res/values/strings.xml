@@ -3,4 +3,8 @@
     <string name="ok">OK</string>
     <string name="prev"><![CDATA[<]]></string>
     <string name="next"><![CDATA[>]]></string>
+    <string name="dec"><![CDATA[-]]></string>
+    <string name="decMore"><![CDATA[--]]></string>
+    <string name="inc"><![CDATA[+]]></string>
+    <string name="incMore"><![CDATA[++]]></string>
 </resources>
