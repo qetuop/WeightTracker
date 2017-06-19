@@ -1,10 +1,13 @@
 package com.qetuop.weighttracker;
 
+import android.app.DatePickerDialog;
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -31,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Cursor weightCursor;
     private WeightCursorAdapter weightAdapter;
+
+    final Calendar myCalendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +72,35 @@ public class MainActivity extends AppCompatActivity {
 
         // set date to now
         dateET = (EditText)findViewById(R.id.dateET);
-        String timeStamp = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
-        dateET.setText(timeStamp);
+        //String timeStamp = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
+        //dateET.setText(timeStamp);
+
+        // set the date initialy
+        updateDateLabel();
+
+        // bring up datePicker dialog on entry
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                // TODO Auto-generated method stub
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateDateLabel();
+            }
+
+        };
+
+        dateET.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                new DatePickerDialog(MainActivity.this, date,
+                        myCalendar.get(Calendar.YEAR),
+                        myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
 
         // populate history list view
         historyLV = (ListView)findViewById(R.id.historyLV);
@@ -77,6 +109,13 @@ public class MainActivity extends AppCompatActivity {
         historyLV.setAdapter(weightAdapter);
 
     } // onCreate
+
+    private void updateDateLabel() {
+        String myFormat = "MM/dd/yyyy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        dateET.setText(sdf.format(myCalendar.getTime()));
+    }
 
     public void okClicked(View view){
         String weight = weightET.getText().toString();
