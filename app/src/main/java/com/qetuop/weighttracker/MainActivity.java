@@ -12,9 +12,17 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.jjoe64.graphview.DefaultLabelFormatter;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.text.DateFormat;
@@ -22,6 +30,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static android.R.attr.entries;
+import static android.R.id.list;
+import static com.qetuop.weighttracker.R.id.graph;
 import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText weightET;
     private EditText dateET;
     private ListView historyLV;
+    private GraphView graph;
 
     private DBHelper db;
 
@@ -45,9 +57,10 @@ public class MainActivity extends AppCompatActivity {
         db = new DBHelper(this.getApplicationContext());
 
         // TODO: TMP HACK
-        //db.deleteAllEntries();
-        //db.addEntry(new Entry(System.currentTimeMillis(),123.4));
-        //db.addEntry(new Entry(System.currentTimeMillis()-1_000_000_000,55));
+        db.deleteAllEntries();
+        db.addEntry(new Entry(System.currentTimeMillis(),123.4));
+        db.addEntry(new Entry(System.currentTimeMillis()-1_000_000_000,55));
+        db.addEntry(new Entry(System.currentTimeMillis()-5_000_000,100));
         List<Entry> entries = db.getAllEntries();
 //        for (Entry entry : entries) {
 //            Log.d("Name: ", entry.toString());
@@ -70,12 +83,10 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        // set date to now
+        // Date
         dateET = (EditText)findViewById(R.id.dateET);
-        //String timeStamp = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
-        //dateET.setText(timeStamp);
 
-        // set the date initialy
+        // set the date initially
         updateDateLabel();
 
         // bring up datePicker dialog on entry
@@ -90,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         };
+
 
         dateET.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,6 +119,30 @@ public class MainActivity extends AppCompatActivity {
         weightCursor = db.getAllEntriesCursor();
         weightAdapter = new WeightCursorAdapter(this, weightCursor);
         historyLV.setAdapter(weightAdapter);
+
+        // Graph
+        graph = (GraphView) findViewById(R.id.graph);
+
+        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(this));
+        graph.getGridLabelRenderer().setNumHorizontalLabels(3); // only 4 because of the space
+
+        // TODO set these based on actual ranges in DB
+        Calendar calendar = Calendar.getInstance();
+        Date d1 = calendar.getTime();
+        calendar.add(Calendar.DATE, -100);
+        Date start = calendar.getTime();
+        calendar.add(Calendar.DATE, 200);
+        Date end = calendar.getTime();
+
+        // set manual x bounds to have nice steps
+        graph.getViewport().setMinX(start.getTime());
+        graph.getViewport().setMaxX(end.getTime());
+        graph.getViewport().setXAxisBoundsManual(true);
+
+        // as we use dates as labels, the human rounding to nice readable numbers is not necessary
+        graph.getGridLabelRenderer().setHumanRounding(false);
+
+        updateGraph();
 
     } // onCreate
 
@@ -145,11 +181,28 @@ public class MainActivity extends AppCompatActivity {
         db.addEntry(entry);
 
         updateTable();
+        updateGraph();
     }
 
     private void updateTable() {
         weightCursor = db.getAllEntriesCursor();
         weightAdapter.changeCursor(weightCursor);
+    }
+
+    private void updateGraph() {
+        Log.d("", "***************updateGraph****************");
+        ArrayList<DataPoint> dataPoints = new ArrayList<>();
+        List<Entry> entries = db.getAllEntries();
+        for (Entry entry : entries) {
+            dataPoints.add(new DataPoint(entry.getDate(), entry.getWeight()));
+            System.out.println(entry.getWeight());
+            Log.d("weight: ", entry.toString());
+        }
+
+        DataPoint [] dataPointArr = dataPoints.toArray(new DataPoint[dataPoints.size()]);
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPointArr);
+
+        graph.addSeries(series);
     }
 
     public void changeWeightClicked(View view) {
