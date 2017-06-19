@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Entry entry = new Entry(dateOut.getTime(), d);
-        Toast.makeText(this, entry.toString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, entry.toString(), Toast.LENGTH_LONG).show();
 
         db.addEntry(entry);
 
@@ -144,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
     } // changeWeightClicked
 
 
+    // TODO: not working exactly right
     public void changeDateClicked(View view) {
 
         // Add the current time to the entered date for storing
@@ -170,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
 
         Date newDate = calendar.getTime();
         String timeStamp = new SimpleDateFormat("MM/dd/yyyy").format(newDate);
-        dateET.setText(timeStamp);;
+        dateET.setText(timeStamp);
 
     } // changeDateClicked
 
