@@ -14,7 +14,7 @@
         android:layout_marginTop="8dp"
         android:editable="false"
         android:ems="10"
-        android:inputType="date"
+        android:inputType="none|date"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/weightET" />
@@ -122,12 +122,24 @@
         app:layout_constraintRight_toLeftOf="@+id/decWeightButton"
         app:layout_constraintTop_toTopOf="@+id/weightET" />
 
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/historyLV"
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/okButton" />/>
+        app:layout_constraintTop_toBottomOf="@+id/okButton"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp">
+
+
+        <ListView
+            android:id="@+id/historyLV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>
