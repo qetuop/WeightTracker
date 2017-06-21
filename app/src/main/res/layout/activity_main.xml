@@ -13,7 +13,8 @@
         android:layout_height="48dp"
         android:layout_marginTop="8dp"
         android:ems="10"
-        android:inputType="none|date"
+        android:inputType="none"
+        android:focusable="false"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/weightET" />
@@ -120,14 +121,16 @@
 
     <ScrollView
         android:id="@+id/scrollView"
-        android:layout_width="0dp"
-        android:layout_height="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
         android:fillViewport="true"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/graph">
+        app:layout_constraintTop_toBottomOf="@+id/graph"
+        android:layout_marginLeft="64dp"
+        android:layout_marginRight="64dp">
 
 
         <ListView
@@ -140,10 +143,14 @@
     <com.jjoe64.graphview.GraphView
         android:id="@+id/graph"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="150dp"
         android:visibility="visible"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/okButton" />
+        app:layout_constraintTop_toBottomOf="@+id/okButton"
+        android:layout_marginTop="0dp"
+        android:layout_marginLeft="16dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginRight="16dp" />
 
 </android.support.constraint.ConstraintLayout>

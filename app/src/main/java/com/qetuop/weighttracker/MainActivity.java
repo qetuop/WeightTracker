@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -57,10 +59,10 @@ public class MainActivity extends AppCompatActivity {
         db = new DBHelper(this.getApplicationContext());
 
         // TODO: TMP HACK
-        db.deleteAllEntries();
-        db.addEntry(new Entry(System.currentTimeMillis(),123.4));
-        db.addEntry(new Entry(System.currentTimeMillis()-1_000_000_000,55));
-        db.addEntry(new Entry(System.currentTimeMillis()-5_000_000,100));
+//        db.deleteAllEntries();
+//        db.addEntry(new Entry(System.currentTimeMillis(),123.4));
+//        db.addEntry(new Entry(System.currentTimeMillis()-1_000_000_000,55));
+//        db.addEntry(new Entry(System.currentTimeMillis()-5_000_000,100));
         List<Entry> entries = db.getAllEntries();
 //        for (Entry entry : entries) {
 //            Log.d("Name: ", entry.toString());
@@ -70,14 +72,13 @@ public class MainActivity extends AppCompatActivity {
 
         // set weight to last entry
         weightET = (EditText)findViewById(R.id.weightET);
-        double weight = 0.0;
+        double weight = 170.0;
         // TODO: make db call function to get last entry
         try {
-            Entry lastEntry = entries.get(entries.size()-1);
-            weight = lastEntry.getWeight();
+            Entry recentEntry = entries.get(0);
+            weight = recentEntry.getWeight();
             weightET.setText(String.valueOf(weight));
         } catch (IndexOutOfBoundsException e) {
-            weightET.setText("000.0");
             e.printStackTrace();
         }
 
@@ -127,22 +128,26 @@ public class MainActivity extends AppCompatActivity {
         graph.getGridLabelRenderer().setNumHorizontalLabels(3); // only 4 because of the space
 
         // TODO set these based on actual ranges in DB
-        Calendar calendar = Calendar.getInstance();
-        Date d1 = calendar.getTime();
-        calendar.add(Calendar.DATE, -100);
-        Date start = calendar.getTime();
-        calendar.add(Calendar.DATE, 200);
-        Date end = calendar.getTime();
-
-        // set manual x bounds to have nice steps
-        graph.getViewport().setMinX(start.getTime());
-        graph.getViewport().setMaxX(end.getTime());
+//        Calendar calendar = Calendar.getInstance();
+//        Date d1 = calendar.getTime();
+//        calendar.add(Calendar.DATE, -100);
+//        Date start = calendar.getTime();
+//        calendar.add(Calendar.DATE, 200);
+//        Date end = calendar.getTime();
+//
+//        // set manual x bounds to have nice steps
+//        graph.getViewport().setMinX(start.getTime());
+//        graph.getViewport().setMaxX(end.getTime());
         graph.getViewport().setXAxisBoundsManual(true);
+        //graph.getViewport().setScrollable(true);
 
         // as we use dates as labels, the human rounding to nice readable numbers is not necessary
         graph.getGridLabelRenderer().setHumanRounding(false);
 
         updateGraph();
+
+        // the weight ET will have focus and popup the keyboard if i don't do this.
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
     } // onCreate
 
@@ -182,6 +187,17 @@ public class MainActivity extends AppCompatActivity {
 
         updateTable();
         updateGraph();
+
+        weightET.clearFocus();
+        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        // hide soft keyboard
+        View v = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        }
+
     }
 
     private void updateTable() {
@@ -203,6 +219,23 @@ public class MainActivity extends AppCompatActivity {
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPointArr);
 
         graph.addSeries(series);
+
+        // set date ranges dataPoints[0] = end
+        Entry end = entries.get(0);
+        Entry start = entries.get(dataPoints.size()-1);
+//
+//        Calendar calendar = Calendar.getInstance();
+//        Date d1 = myCalendar.getTime();
+//        calendar.add(Calendar.DATE, -100);
+//        Date start = calendar.getTime();
+//        calendar.add(Calendar.DATE, 200);
+//        Date end = calendar.getTime();
+
+        // set manual x bounds to have nice steps
+        graph.getViewport().setMinX(start.getDate());
+        graph.getViewport().setMaxX(end.getDate());
+        graph.getViewport().setXAxisBoundsManual(true);
+
     }
 
     public void changeWeightClicked(View view) {

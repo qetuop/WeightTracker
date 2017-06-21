@@ -109,7 +109,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public List<Entry> getAllEntries() {
         List<Entry> entryList = new ArrayList<Entry>();
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + WEIGHT_TABLE_NAME;
+        String selectQuery = "SELECT  * FROM " + WEIGHT_TABLE_NAME +
+                             " ORDER BY " + WEIGHT_COLUMN_DATE + " DESC";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -174,7 +175,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Cursor getAllEntriesCursor() {
         SQLiteDatabase db = this.getWritableDatabase();
-
+        //"date_column ASC LIMIT 1"
         Cursor cursor = db.query(
                 WEIGHT_TABLE_NAME,
                 projection,
@@ -182,11 +183,27 @@ public class DBHelper extends SQLiteOpenHelper {
                 null,
                 null,
                 null,
-                null);
+                WEIGHT_COLUMN_DATE+" DESC");
 
         cursor.moveToFirst();
 
         return cursor;
     }
-    
+/*
+    public Cursor getItemAisleCursor(long storeId) {
+
+        final String MY_QUERY =
+                "SELECT item._id, item.name, item.selected, item.completed, aisle.aisle_name " +
+                        "FROM item, aisle " +
+                        "WHERE item.selected=1 " +
+                        "    AND (aisle.store_id=? AND aisle.item_id=item._id)"+
+                        "ORDER BY aisle_name";
+        String[] args =  new String[]{String.valueOf(storeId)};
+        Cursor cursor = mDb.rawQuery(MY_QUERY, args, null);
+
+        cursor.moveToFirst();
+
+        return cursor;
+    }
+  */
 }
