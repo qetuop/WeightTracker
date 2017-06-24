@@ -1,17 +1,21 @@
 package com.qetuop.weighttracker;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jjoe64.graphview.DefaultLabelFormatter;
@@ -26,12 +30,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.text.DateFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-
+import android.app.DialogFragment;
 import static android.R.attr.entries;
 import static android.R.id.list;
 import static com.qetuop.weighttracker.R.id.graph;
@@ -62,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 //        db.deleteAllEntries();
 //        db.addEntry(new Entry(System.currentTimeMillis(),123.4));
 //        db.addEntry(new Entry(System.currentTimeMillis()-1_000_000_000,55));
-//        db.addEntry(new Entry(System.currentTimeMillis()-5_000_000,100));
+        //db.addEntry(new Entry(System.currentTimeMillis()-5_000_000,100));
         List<Entry> entries = db.getAllEntries();
 //        for (Entry entry : entries) {
 //            Log.d("Name: ", entry.toString());
@@ -121,11 +126,35 @@ public class MainActivity extends AppCompatActivity {
         weightAdapter = new WeightCursorAdapter(this, weightCursor);
         historyLV.setAdapter(weightAdapter);
 
+        AdapterView.OnItemClickListener
+                mMessageClickedHandler =
+                new AdapterView.OnItemClickListener() {
+                    public void onItemClick(AdapterView parent,
+                                            View v,
+                                            int position,
+                                            long id) {
+                        System.out.println(position + ", " + id);
+
+                        //DialogFragment newFragment = MyDialogFragment.newInstance();
+                        //newFragment.show(getFragmentManager(), "dialog");
+
+                        DialogFragment eed = EditEntryDialog.newInstance((int)id);
+                        eed.show(MainActivity.this.getFragmentManager(), "foo");
+
+                        //EditEntryDialog eed = new EditEntryDialog((int)id);
+//                        Bundle args = new Bundle();
+//                        args.putInt("id", (int)id);
+//                        eed.setArguments(args);
+
+                        System.out.println("*************");
+                    }
+                };
+        historyLV.setOnItemClickListener(mMessageClickedHandler);
+
         // Graph
         graph = (GraphView) findViewById(R.id.graph);
 
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(this));
-        graph.getGridLabelRenderer().setNumHorizontalLabels(3); // only 4 because of the space
+
 
         // TODO set these based on actual ranges in DB
 //        Calendar calendar = Calendar.getInstance();
@@ -138,11 +167,15 @@ public class MainActivity extends AppCompatActivity {
 //        // set manual x bounds to have nice steps
 //        graph.getViewport().setMinX(start.getTime());
 //        graph.getViewport().setMaxX(end.getTime());
-        graph.getViewport().setXAxisBoundsManual(true);
+//        graph.getViewport().setXAxisBoundsManual(true);
         //graph.getViewport().setScrollable(true);
 
+        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(this));
+        graph.getGridLabelRenderer().setNumHorizontalLabels(3); // only 4 because of the space
         // as we use dates as labels, the human rounding to nice readable numbers is not necessary
-        graph.getGridLabelRenderer().setHumanRounding(false);
+        //graph.getGridLabelRenderer().setHumanRounding(false);
+        //graph.getViewport().setXAxisBoundsManual(true);
+
 
         updateGraph();
 
@@ -207,35 +240,42 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateGraph() {
         Log.d("", "***************updateGraph****************");
+        graph.removeAllSeries();
+
         ArrayList<DataPoint> dataPoints = new ArrayList<>();
         List<Entry> entries = db.getAllEntries();
         for (Entry entry : entries) {
-            dataPoints.add(new DataPoint(entry.getDate(), entry.getWeight()));
+            dataPoints.add(new DataPoint(new Date(entry.getDate()), entry.getWeight()));
             System.out.println(entry.getWeight());
             Log.d("weight: ", entry.toString());
         }
 
+        // display in normal order
+        Collections.reverse(dataPoints);
+
         DataPoint [] dataPointArr = dataPoints.toArray(new DataPoint[dataPoints.size()]);
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPointArr);
 
-        graph.addSeries(series);
+        if ( dataPoints.isEmpty() ) {
+            return;
+        }
+
 
         // set date ranges dataPoints[0] = end
         Entry end = entries.get(0);
         Entry start = entries.get(dataPoints.size()-1);
-//
-//        Calendar calendar = Calendar.getInstance();
-//        Date d1 = myCalendar.getTime();
-//        calendar.add(Calendar.DATE, -100);
-//        Date start = calendar.getTime();
-//        calendar.add(Calendar.DATE, 200);
-//        Date end = calendar.getTime();
 
-        // set manual x bounds to have nice steps
+        graph.addSeries(series);
+
+        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(this));
+        graph.getGridLabelRenderer().setNumHorizontalLabels(3); // only 4 because of the space
+        // as we use dates as labels, the human rounding to nice readable numbers is not necessary
+
+        graph.getViewport().setXAxisBoundsManual(true);
+        graph.getGridLabelRenderer().setHumanRounding(false);
+
         graph.getViewport().setMinX(start.getDate());
         graph.getViewport().setMaxX(end.getDate());
-        graph.getViewport().setXAxisBoundsManual(true);
-
     }
 
     public void changeWeightClicked(View view) {
@@ -299,5 +339,11 @@ public class MainActivity extends AppCompatActivity {
         dateET.setText(timeStamp);
 
     } // changeDateClicked
+
+    public void entryUpdated() {
+        System.out.println("______________________________");
+        updateTable();
+        updateGraph();
+    }
 
 } // MainActivity

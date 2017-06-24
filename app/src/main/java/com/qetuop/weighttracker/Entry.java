@@ -75,7 +75,7 @@ public class Entry {
 
         return "Entry{" +
                 "id=" + id +
-                ", date=" + df.format(new Date(getDate())) + " (" +  ")" +
+                ", date=" + df.format(new Date(getDate())) + " (" +getDate()+  ")" +
                 ", weight=" + weight +
                 ", comment='" + comment + '\'' +
                 '}';
