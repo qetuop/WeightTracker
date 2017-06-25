@@ -126,27 +126,13 @@ public class MainActivity extends AppCompatActivity {
         weightAdapter = new WeightCursorAdapter(this, weightCursor);
         historyLV.setAdapter(weightAdapter);
 
-        AdapterView.OnItemClickListener
-                mMessageClickedHandler =
-                new AdapterView.OnItemClickListener() {
+        AdapterView.OnItemClickListener mMessageClickedHandler = new AdapterView.OnItemClickListener() {
                     public void onItemClick(AdapterView parent,
                                             View v,
                                             int position,
                                             long id) {
-                        System.out.println(position + ", " + id);
-
-                        //DialogFragment newFragment = MyDialogFragment.newInstance();
-                        //newFragment.show(getFragmentManager(), "dialog");
-
                         DialogFragment eed = EditEntryDialog.newInstance((int)id);
                         eed.show(MainActivity.this.getFragmentManager(), "foo");
-
-                        //EditEntryDialog eed = new EditEntryDialog((int)id);
-//                        Bundle args = new Bundle();
-//                        args.putInt("id", (int)id);
-//                        eed.setArguments(args);
-
-                        System.out.println("*************");
                     }
                 };
         historyLV.setOnItemClickListener(mMessageClickedHandler);
@@ -154,28 +140,8 @@ public class MainActivity extends AppCompatActivity {
         // Graph
         graph = (GraphView) findViewById(R.id.graph);
 
-
-
-        // TODO set these based on actual ranges in DB
-//        Calendar calendar = Calendar.getInstance();
-//        Date d1 = calendar.getTime();
-//        calendar.add(Calendar.DATE, -100);
-//        Date start = calendar.getTime();
-//        calendar.add(Calendar.DATE, 200);
-//        Date end = calendar.getTime();
-//
-//        // set manual x bounds to have nice steps
-//        graph.getViewport().setMinX(start.getTime());
-//        graph.getViewport().setMaxX(end.getTime());
-//        graph.getViewport().setXAxisBoundsManual(true);
-        //graph.getViewport().setScrollable(true);
-
         graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(this));
         graph.getGridLabelRenderer().setNumHorizontalLabels(3); // only 4 because of the space
-        // as we use dates as labels, the human rounding to nice readable numbers is not necessary
-        //graph.getGridLabelRenderer().setHumanRounding(false);
-        //graph.getViewport().setXAxisBoundsManual(true);
-
 
         updateGraph();
 
@@ -222,7 +188,6 @@ public class MainActivity extends AppCompatActivity {
         updateGraph();
 
         weightET.clearFocus();
-        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         // hide soft keyboard
         View v = this.getCurrentFocus();
@@ -231,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
             imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
         }
 
-    }
+    } // okClicked
 
     private void updateTable() {
         weightCursor = db.getAllEntriesCursor();
@@ -239,15 +204,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateGraph() {
-        Log.d("", "***************updateGraph****************");
         graph.removeAllSeries();
 
         ArrayList<DataPoint> dataPoints = new ArrayList<>();
         List<Entry> entries = db.getAllEntries();
         for (Entry entry : entries) {
             dataPoints.add(new DataPoint(new Date(entry.getDate()), entry.getWeight()));
-            System.out.println(entry.getWeight());
-            Log.d("weight: ", entry.toString());
         }
 
         // display in normal order
@@ -260,7 +222,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-
         // set date ranges dataPoints[0] = end
         Entry end = entries.get(0);
         Entry start = entries.get(dataPoints.size()-1);
@@ -268,12 +229,10 @@ public class MainActivity extends AppCompatActivity {
         graph.addSeries(series);
 
         graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(this));
-        graph.getGridLabelRenderer().setNumHorizontalLabels(3); // only 4 because of the space
-        // as we use dates as labels, the human rounding to nice readable numbers is not necessary
-
-        graph.getViewport().setXAxisBoundsManual(true);
+        graph.getGridLabelRenderer().setNumHorizontalLabels(3);
         graph.getGridLabelRenderer().setHumanRounding(false);
 
+        graph.getViewport().setXAxisBoundsManual(true);
         graph.getViewport().setMinX(start.getDate());
         graph.getViewport().setMaxX(end.getDate());
     }
@@ -340,8 +299,8 @@ public class MainActivity extends AppCompatActivity {
 
     } // changeDateClicked
 
+    // called from edit dialog
     public void entryUpdated() {
-        System.out.println("______________________________");
         updateTable();
         updateGraph();
     }

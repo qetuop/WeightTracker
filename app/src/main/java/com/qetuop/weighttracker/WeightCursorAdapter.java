@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -40,24 +41,13 @@ public class WeightCursorAdapter extends CursorAdapter {
 
         // Extract properties from cursor
         long date = cursor.getLong(cursor.getColumnIndexOrThrow(DBHelper.WEIGHT_COLUMN_DATE));
-        double weight = cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.WEIGHT_COLUMN_WEIGHT));
+        double weight = cursor.getDouble(cursor.getColumnIndexOrThrow(DBHelper.WEIGHT_COLUMN_WEIGHT));
 
         // Format
-        String timeStamp = new SimpleDateFormat("MM/dd/yyyy").format(new Date(date));
-//        Date dateOut = new Date();
-//        try {
-//            DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-//            //String timeString = df.format(new Date()).substring(10); // 10 is the beginIndex of time here
-//            //String dateTimeString = date+" "+timeString;
-//            //dateOut = df.parse(dateTimeString);
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
+        String dateString = new SimpleDateFormat("MM/dd/yyyy").format(date);
+        String weightString = new DecimalFormat("###.#").format(weight);
 
-        DecimalFormat df2 = new DecimalFormat("###.#");
-
-        // Populate fields with extracted properties
-        dateTV.setText(timeStamp);
-        weightTV.setText(String.valueOf(Double.valueOf(df2.format(weight))));
+        dateTV.setText(dateString);
+        weightTV.setText(weightString);
     }
 }
