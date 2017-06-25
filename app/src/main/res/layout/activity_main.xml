@@ -37,7 +37,6 @@
         android:layout_marginRight="15dp"
         android:onClick="changeDateClicked"
         android:text="@string/prev"
-        android:visibility="invisible"
         app:layout_constraintRight_toLeftOf="@+id/dateET"
         app:layout_constraintTop_toTopOf="@+id/dateET" />
 
@@ -49,7 +48,6 @@
         android:layout_marginStart="15dp"
         android:onClick="changeDateClicked"
         android:text="@string/next"
-        android:visibility="invisible"
         app:layout_constraintLeft_toRightOf="@+id/dateET"
         app:layout_constraintTop_toTopOf="@+id/dateET" />
 
